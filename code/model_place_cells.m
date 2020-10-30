@@ -113,9 +113,9 @@ for i = 1:n_pcs
             y = y/max(y)*max_peak; % scale the peak
             temp_loc = all_tras{rand_tras(j)};
 
-
+            %Save 
             for k = 1:length(trace)
-                trace(k) = y(round(temp_loc(k)/bin_size)); %TODO: Dori wtf?
+                trace(k) = y(ceil(temp_loc(k)/bin_size)); % Find the fluorescence for each location
             end
         end
 
