@@ -12,6 +12,7 @@ The default version imports a cell array (`allTras.mat`), with each cell contain
 Create a model dataset with the default settings using:
 
 `data = model_place_cells()`
+
 ![Rasterplot of example data](/images/example_dataset.png)
 
 Create a model dataset with variable place cells with a place field width of 100 cm:
