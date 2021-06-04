@@ -19,8 +19,6 @@ function [all_traces, all_loc] = model_place_cells(varargin)
 %   all_loc         - t x 1 vector containing the location at each timepoint (t) in
 %                     cm
 
-% Load pre-calculated parameters
-all_tras = importdata(('allTras.mat'));
 
 % Default values
 bin_size = 2;
@@ -34,6 +32,7 @@ var_sigma = 0;
 rel  = 1;
 env_length = 200;
 noise_lambda = 235.1003;
+traversal_file = 'allTras.mat'
 
 % Parse input
 p = inputParser;
@@ -48,6 +47,7 @@ addParameter(p,'rel',rel);
 addParameter(p,'n_placefields',n_placefields);
 addParameter(p,'env_length',env_length);
 addParameter(p,'noise_lambda',noise_lambda);
+addParameter(p,'traversal_file',traversal_file);
 parse(p,varargin{:});
 
 % put parsed values in parameters
@@ -62,6 +62,11 @@ rel = p.Results.rel;
 n_placefields = p.Results.n_placefields;
 env_length = p.Results.env_length;
 noise_lambda = p.Results.noise_lambda;
+traversal_file = p.Results.traversal_file;
+
+
+% Load pre-calculated parameters
+all_tras = importdata(traversal_file);
 
 % Calculate number of bins
 n_bins = round(env_length/bin_size);
@@ -75,10 +80,8 @@ rand_tras = datasample(1:length(all_tras),tot_n_tras);
 all_loc = vertcat(all_tras{rand_tras});
 
 % Clean loco
-all_loc = all_loc-min(all_loc);
-all_loc = all_loc/max(all_loc);
-raw_loc = all_loc*(env_length-1)+1;
-all_loc = round(raw_loc);
+raw_loc = all_loc*env_length;
+all_loc = discretize(all_loc, env_length);
 
 % Calculate the average location of the place cells
 offsets = linspace((pf_width/2)*n_placefields, env_length-(pf_width/2)*n_placefields, n_pcs+1)-(env_length/2);
@@ -111,7 +114,7 @@ for i = 1:n_pcs
                 y = y+normpdf(x,center(c),pf_width/4)';
             end
             y = y/max(y)*max_peak; % scale the peak
-            temp_loc = all_tras{rand_tras(j)};
+            temp_loc = discretize(all_tras{rand_tras(j)},env_length);
 
             %Save 
             for k = 1:length(trace)
