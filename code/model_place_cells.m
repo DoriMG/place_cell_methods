@@ -1,4 +1,4 @@
-function [all_traces, all_loc] = model_place_cells(varargin)
+function [all_traces, raw_loc] = model_place_cells(varargin)
 % Creates a dataset containing model place cells and random control cells
 %
 % vargargin inputs:
